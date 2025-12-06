@@ -6,31 +6,37 @@ jobs:
   unzip-job:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repo
+      # Step 1: Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Download ZIP artifact or file
+      # Step 2: Download ZIP file from raw GitHub URL
       - name: Download ZIP
         run: |
-          FILE_URL="https://github.com/Mahboub-power-is-back/plus/releases/download/latest/NorthAfrica-main.zip"
+          FILE_URL="https://raw.githubusercontent.com/Mahboub-power-is-back/plus/refs/heads/main/NorthAfrica-main.zip"
           FILE_NAME="NorthAfrica-main.zip"
-          wget -O "$FILE_NAME" "$FILE_URL"
+          curl -L -o "$FILE_NAME" "$FILE_URL"
+          
+          # Verify the download
+          if [ ! -s "$FILE_NAME" ]; then
+            echo "Error: File is missing or empty!"
+            exit 1
+          fi
+          echo "Downloaded file:"
+          ls -lh "$FILE_NAME"
 
       # Step 3: Test the ZIP file
       - name: Test ZIP Integrity
         run: |
-          FILE_NAME="NorthAfrica-main.zip"
-          unzip -t "$FILE_NAME" || { echo "ZIP file is corrupted! Exiting."; exit 1; }
+          unzip -t NorthAfrica-main.zip || { echo "ZIP file is invalid or corrupted! Exiting."; exit 1; }
 
-      # Step 4: Extract safely
+      # Step 4: Extract ZIP safely
       - name: Extract ZIP
         run: |
-          FILE_NAME="NorthAfrica-main.zip"
           DEST_DIR="./extracted"
           mkdir -p "$DEST_DIR"
-          unzip -o "$FILE_NAME" -d "$DEST_DIR"
-          
+          unzip -o NorthAfrica-main.zip -d "$DEST_DIR"
+
       # Step 5: List contents to verify
       - name: Verify extraction
         run: ls -l ./extracted
