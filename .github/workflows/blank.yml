@@ -1,4 +1,4 @@
-name: Unzip File
+name: Unzip NorthAfrica-main
 
 on:
   workflow_dispatch:
@@ -11,15 +11,17 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    - name: List files (debug)
+      run: ls -la
+
     - name: Unzip file
       run: |
-        unzip yourfile.zip -d extracted
+        unzip NorthAfrica-main.zip -d extracted
 
     - name: Commit extracted files
       run: |
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
-        mkdir -p extracted
         git add extracted
-        git commit -m "Unzipped file automatically" || echo "No changes"
+        git commit -m "Unzipped NorthAfrica-main.zip" || echo "No changes"
         git push
